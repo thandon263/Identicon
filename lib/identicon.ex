@@ -4,13 +4,23 @@ defmodule Identicon do
     |> hash_input
     |> pick_color
     |> build_grid
+    |> filter_odd_squares
+  end
+
+  def filter_odd_squares %Identicon.Image{ grid: grid } = image do
+    # filter the odd squares ( Even squares will remain )
   end
 
   def build_grid %Identicon.Image{ hex: hex } = image do
     # Pipe function will pass the argument (image) down the functions
-    hex
-    |> Enum.chunk(3)
-    |> Enum.map(&mirror_row/1) # This is how we pass a reference to another function
+    grid = 
+      hex
+      |> Enum.chunk(3)
+      |> Enum.map(&mirror_row/1) # This is how we pass a reference to another function
+      |> List.flatten # Transform into one array / List of elements
+      |> Enum.with_index # Use index to transform
+    
+    %Identicon.Image{ image | grid: grid }
   end
 
   def mirror_row row do
